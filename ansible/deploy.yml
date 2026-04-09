@@ -24,11 +24,11 @@
 
     - name: Copy built assets to server
       copy:
-      src: "{{ lookup('env', 'WORKSPACE') }}/public/build/"
-      dest: "{{ deploy_path }}/public/build/"
-      owner: www-data
-      group: www-data
-      mode: '0755'
+        src: "{{ lookup('env', 'WORKSPACE') }}/public/build/"
+        dest: "{{ deploy_path }}/public/build/"
+        owner: www-data
+        group: www-data
+        mode: '0755'
 
     - name: Copy .env file
       copy:
