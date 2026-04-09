@@ -46,6 +46,7 @@ pipeline {
         stage('Generate Key') {
             steps {
                 sh 'php artisan key:generate'
+                sh 'php artisan wayfinder:generate --with-form'
             }
         }
 
