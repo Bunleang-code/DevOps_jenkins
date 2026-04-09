@@ -43,15 +43,15 @@ pipeline {
             }
         }
 
-        stage('Build Assets') {
-            steps {
-                sh 'npm run build'
-            }
-        }
-
         stage('Generate Key') {
             steps {
                 sh 'php artisan key:generate'
+            }
+        }
+
+        stage('Build Assets') {
+            steps {
+                sh 'npm run build'
             }
         }
 
