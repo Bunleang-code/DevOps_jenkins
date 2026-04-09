@@ -3,78 +3,56 @@
   hosts: laravel_server
   become: true
   vars:
-    deploy_path: /var/www/laravel
-    app_name: "{{ lookup('env', 'APP_NAME') | default('my-laravel-app') }}"
+    deploy_path: /var/www/lo-bunleang
 
   tasks:
     - name: Ensure deploy directory exists
       file:
         path: "{{ deploy_path }}"
         state: directory
-        owner: www-data
-        group: www-data
         mode: '0755'
 
-    - name: Copy Laravel files to server
-      synchronize:
-        src: "{{ lookup('env', 'WORKSPACE') }}/"
-        dest: "{{ deploy_path }}/"
-        delete: yes
-        recursive: yes
-        rsync_opts:
-          - "--exclude=.env"
-          - "--exclude=.git"
-          - "--exclude=vendor"
-          - "--exclude=node_modules"
+    - name: Clone or pull latest code
+      git:
+        repo: https://github.com/Bunleang-code/DevOps_jenkins.git
+        dest: "{{ deploy_path }}"
+        version: tp03
+        force: yes
 
-    - name: Copy .env file from template
-      template:
-        src: "{{ lookup('env', 'WORKSPACE') }}/.env.example"
+    - name: Copy .env file
+      copy:
+        src: "{{ deploy_path }}/.env.example"
         dest: "{{ deploy_path }}/.env"
-        owner: www-data
-        group: www-data
-        mode: '0644'
-      ignore_errors: yes
+        remote_src: yes
+        force: no
 
     - name: Install Composer dependencies
       command: composer install --no-dev --optimize-autoloader
       args:
         chdir: "{{ deploy_path }}"
-      become_user: www-data
 
     - name: Generate application key
       command: php artisan key:generate
       args:
         chdir: "{{ deploy_path }}"
-      become_user: www-data
-
-    - name: Run database migrations
-      command: php artisan migrate --force
-      args:
-        chdir: "{{ deploy_path }}"
-      become_user: www-data
-      ignore_errors: yes
 
     - name: Install NPM dependencies
       command: npm install
       args:
         chdir: "{{ deploy_path }}"
-      become_user: www-data
 
     - name: Build frontend assets
       command: npm run build
       args:
         chdir: "{{ deploy_path }}"
-      become_user: www-data
 
     - name: Clear and cache config
-      command: |
+      shell: |
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
       args:
         chdir: "{{ deploy_path }}"
-      become_user: www-data
 
     - name: Set proper permissions
       file:
