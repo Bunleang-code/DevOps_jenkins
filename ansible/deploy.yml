@@ -3,7 +3,7 @@
   hosts: laravel_server
   become: true
   vars:
-    deploy_path: /var/www/lo-bunleang
+    deploy_path: /var/www/lo_bunleang
 
   tasks:
     - name: Ensure deploy directory exists
@@ -11,6 +11,9 @@
         path: "{{ deploy_path }}"
         state: directory
         mode: '0755'
+
+    - name: Fix git safe directory
+      command: git config --global --add safe.directory /var/www/lo-bunleang
 
     - name: Clone or pull latest code
       git:
@@ -63,3 +66,4 @@
         name: nginx
         state: reloaded
       ignore_errors: yes
+
