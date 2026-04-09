@@ -36,16 +36,6 @@
       args:
         chdir: "{{ deploy_path }}"
 
-    - name: Install NPM dependencies
-      command: npm install
-      args:
-        chdir: "{{ deploy_path }}"
-
-    - name: Build frontend assets
-      command: npm run build
-      args:
-        chdir: "{{ deploy_path }}"
-
     - name: Clear and cache config
       shell: |
         php artisan config:cache
