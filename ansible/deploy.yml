@@ -13,7 +13,7 @@
         mode: '0755'
 
     - name: Fix git safe directory
-      command: git config --global --add safe.directory /var/www/lo-bunleang
+      command: git config --global --add safe.directory /var/www/lo_bunleang
 
     - name: Clone or pull latest code
       git:
